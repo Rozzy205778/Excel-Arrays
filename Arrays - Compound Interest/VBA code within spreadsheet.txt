@@ -1,0 +1,46 @@
+Private Function CompoundInterest(tableArray As Variant, arrayLength As Integer)
+'Calculates Compound Interest
+
+    Dim myPower As Variant
+    
+    'Add column name for column 6
+    tableArray(1, 6) = "Money Out"
+    
+    'Loop through array and change column 6 to the calculated figure
+    For x = 2 To arrayLength
+        If tableArray(x, 1) <> "" Then
+            myPower = (1 + tableArray(x, 4)) ^ tableArray(x, 5)
+            tableArray(x, 6) = FormatCurrency(tableArray(x, 3) * myPower)
+            tableArray(x, 3) = FormatCurrency(tableArray(x, 3))
+        End If
+    Next x
+    
+    CompoundInterest = tableArray
+    
+End Function
+Public Sub InitialiseCompoundInterest()
+'Main sub which initialises the functions
+
+    Dim rowTotal As Integer
+    Dim tableArray As Variant
+    Dim returnedTableArray As Variant
+    
+    Application.ScreenUpdating = False
+
+    'Find the total number of rows in the table
+    rowTotal = Sheet1.UsedRange.Rows.Count
+    
+    'Load the table into an array using Value2 (which is more efficient)
+    tableArray = Sheet1.Range("A1:F" & rowTotal).Value2
+    
+    'Return array with calculated figures using the CompoundInterest function
+    returnedTableArray = CompoundInterest(tableArray, rowTotal)
+    
+    'Clear contents of sheet3 and add new table from array
+    Sheet3.UsedRange.ClearContents
+    Sheet3.Range("A1:F" & rowTotal) = returnedTableArray
+    Sheet3.Select
+    
+    Application.ScreenUpdating = True
+    
+End Sub

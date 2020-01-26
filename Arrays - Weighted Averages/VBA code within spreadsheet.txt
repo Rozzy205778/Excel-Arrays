@@ -1,0 +1,62 @@
+Private Function WeightedAverage(tableArray As Variant)
+'Calculates Weighted Average
+
+    Dim arrayLength As Integer
+    Dim myProduct As Variant
+    Dim sumOfProduct As Variant
+    Dim sumOfWeight As Long
+    
+    sumOfProduct = 0 'This will be a running total of the product of weight and salary for each element
+    sumOfWeight = 0 'This will be a running total of the weight
+    
+    'Find the length of the array
+    arrayLength = UBound(tableArray) - LBound(tableArray) + 1
+    
+    'Calculate Weighted Average
+    For x = 2 To arrayLength
+        If tableArray(x, 1) <> "" Then
+            myProduct = tableArray(x, 3) * tableArray(x, 4)
+            sumOfProduct = sumOfProduct + myProduct
+            sumOfWeight = sumOfWeight + tableArray(x, 3)
+        End If
+    Next x
+    
+    'Avoid divide by 0 errors
+    If sumOfWeight <> 0 Then
+        'Return the weighted average
+        WeightedAverage = sumOfProduct / sumOfWeight
+    Else
+        MsgBox "An error occurred. Cannot divide by 0."
+        WeightedAverage = 0
+    End If
+    
+End Function
+Public Sub InitialiseWeightedAverage()
+'Main sub which initialises the functions
+
+    Dim sheetName As String
+    Dim rowTotal As Integer
+    Dim tableArray As Variant
+    Dim myWeightedAverage As Variant
+    
+    Application.ScreenUpdating = False
+
+    'Find the total number of rows in the table
+    rowTotal = Sheet1.UsedRange.Rows.Count
+    
+    'Load the table into an array using Value2 (which is more efficient)
+    tableArray = Sheet1.Range("A1:D" & rowTotal).Value2
+    
+    'Calculate Weighted Average
+    myWeightedAverage = WeightedAverage(tableArray)
+    
+    'Add answer to sheet
+    Sheet1.Range("G4") = FormatCurrency(myWeightedAverage)
+    
+    Application.ScreenUpdating = True
+End Sub
+Public Function WorksheetExists(sName As String) As Boolean
+' Checks if the named worksheet exists
+
+    WorksheetExists = Evaluate("ISREF('" & sName & "'!A1)")
+End Function
